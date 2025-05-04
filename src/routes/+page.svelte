@@ -3,10 +3,11 @@
 	import Peer, { type DataConnection } from 'peerjs';
 
 	let client = $state<Peer>();
+	let client_state = $state<Boolean>(false);
 	let client_id = $state<string>('not set');
 	// let conn_client = $state<any>();
 
-	let peer_id_add = $state<string>('b6d690c4-9e8f-4187-b714-ee38f4a208e6');
+	let peer_id_add = $state<string>();
 	let active_connections = $state<
 		{
 			id: string;
@@ -18,9 +19,35 @@
 	let message_content = $state<string>('');
 	let message_box = $state<HTMLElement>();
 
+	$effect(() => {
+		messages.length;
+		message_box!.scrollTop = message_box!.scrollHeight;
+	});
+
 	function create_client() {
-		client = new Peer();
-		client.on('open', (id) => (client_id = id));
+		client_state = true;
+		// https://gist.github.com/sagivo/3a4b2f2c7ac6e1b5267c2f1f59ac6c6b?permalink_comment_id=4727522#gistcomment-4727522
+		client = new Peer({
+			config: {
+				iceServers: [
+					{ url: 'stun:stun.l.google.com:19302' },
+					{
+						url: 'TURN:freestun.net:3478',
+						username: 'free',
+						credential: 'free'
+					}
+				]
+			},
+			debug: 3
+		});
+		client.on('open', (id) => {
+			client_id = id;
+			client_state = false;
+		});
+		client.on('error', () => {
+			client_id = 'error contacting ICE servers';
+			client_state = false;
+		});
 		client!.on('close', () => (client_id = 'not set'));
 		client.on('connection', (conn) => {
 			active_connections.push({
@@ -125,21 +152,15 @@
 	}
 </script>
 
-<div class="hero bg-base-200 min-h-screen">
+<div class="hero bg-base-200 mt-10">
 	<div class="hero-content text-center">
 		<div class="max-w-md">
 			<h1 class="text-5xl font-bold">Palooza Tester</h1>
 			<p class="py-6">
 				A site to troubleshoot and provide basic tooling for the <a
 					class="link link-primary"
-					href="#">Palooza</a
+					href="https://codeberg.org/NeoSahadeo/Palooza">Palooza</a
 				> extension. Available soon!
-			</p>
-			<p>
-				Theme by <a
-					class="link link-secondary"
-					href="https://www.linkedin.com/in/uveer-madho-824ba21a2/">Uveer Madho</a
-				>
 			</p>
 		</div>
 	</div>
@@ -153,15 +174,20 @@
 		Client ID: {client_id}
 	</p>
 	<span class="flex items-center gap-2">
-		{#if client}
-			<button onclick={close_client} class="btn btn-secondary"> Close Client</button>
+		{#if client && !client_state}
+			<button onclick={close_client} class="btn btn-secondary"> Kill Client</button>
 			<div class="inline-grid *:[grid-area:1/1]">
 				<div class="status status-success animate-ping"></div>
 				<div class="status status-success"></div>
 			</div>
 			Client running
 		{:else}
-			<button onclick={create_client} class="btn btn-primary"> Activate Client</button>
+			<button
+				onclick={create_client}
+				class={`btn ${client_state ? 'btn-disabled' : 'btn-primary'}`}
+			>
+				Enable Client</button
+			>
 			<div class="inline-grid *:[grid-area:1/1]">
 				<div class="status status-error animate-ping"></div>
 				<div class="status status-error"></div>
@@ -191,8 +217,10 @@
 						<td>{index}</td>
 						<td>{value.id}</td>
 						<td
-							><button value={value.id} onclick={close_connection} class="btn btn-secondary"
-								>Close Connection</button
+							><button
+								value={value.id}
+								onclick={close_connection}
+								class="btn btn-secondary text-nowrap">Close Connection</button
 							></td
 						>
 					</tr>
@@ -213,7 +241,13 @@
 	<h2 class=" text-lg font-bold">Messenger</h2>
 	<div bind:this={message_box} class="max-h-40 min-h-40 overflow-scroll rounded bg-black">
 		{#each messages as value}
-			<div class="chat-bubble my-1">{value}</div>
+			{#if value.includes('self: ')}
+				<div class="chat-bubble chat-bubble-neutral">
+					{value.slice(6)}
+				</div>
+			{:else}
+				<div class="chat-bubble my-1">{value}</div>
+			{/if}
 		{/each}
 	</div>
 	<div class="flex flex-row items-center justify-end gap-2">
@@ -234,3 +268,46 @@
 		</button>
 	</div>
 </div>
+
+<div class="flex w-full flex-col">
+	<div class="divider"></div>
+</div>
+<footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded p-10">
+	<nav>
+		<div class="grid grid-flow-col gap-4">
+			<a href="https://x.com/NeoSahadeo_/">
+				<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+					><!-- Icon from Huge Icons by Hugeicons - undefined --><path
+						fill="none"
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="1.5"
+						d="m3 21l7.548-7.548M21 3l-7.548 7.548m0 0L8 3H3l7.548 10.452m2.904-2.904L21 21h-5l-5.452-7.548"
+						color="currentColor"
+					/></svg
+				>
+			</a>
+			<a href="https://neosahadeo.github.io/journal">
+				<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512"
+					><!-- Icon from IonIcons by Ben Sperry - https://github.com/ionic-team/ionicons/blob/main/LICENSE --><path
+						d="M92.1 32C76.6 32 64 44.6 64 60.1V452c0 15.5 12.6 28.1 28.1 28.1H432c8.8 0 16-7.2 16-16s-7.2-16-16-16H112.5c-8.2 0-15.4-6-16.4-14.1-1.1-9.7 6.5-18 15.9-18h208V32H92.1z"
+						fill="currentColor"
+					/><path
+						d="M432 416c8.8 0 16-7.2 16-16V60.1c0-15.5-12.6-28.1-28.1-28.1H368v384h64z"
+						fill="currentColor"
+					/></svg
+				>
+			</a>
+		</div>
+	</nav>
+	<aside>
+		<p>
+			Themed by <a
+				class="link link-accent"
+				href="https://www.linkedin.com/in/uveer-madho-824ba21a2/">Uveer Madho</a
+			>
+		</p>
+		<p>Palooza © {new Date().getFullYear()} - All right reserved by Neo Sahadeo</p>
+	</aside>
+</footer>
