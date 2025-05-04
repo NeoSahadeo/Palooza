@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	// palooza
 	import Peer, { type DataConnection } from 'peerjs';
 
 	let client = $state<Peer>();
 	let client_id = $state<string>('not set');
-	let conn_client = $state<any>();
+	// let conn_client = $state<any>();
 
-	let peer_id_add = $state<string>();
+	let peer_id_add = $state<string>('b6d690c4-9e8f-4187-b714-ee38f4a208e6');
 	let active_connections = $state<
 		{
 			id: string;
@@ -18,6 +16,7 @@
 	let messages = $state<string[]>([]);
 
 	let message_content = $state<string>('');
+	let message_box = $state<HTMLElement>();
 
 	function create_client() {
 		client = new Peer();
@@ -79,17 +78,14 @@
 			return;
 		}
 
-		let exists = false;
-		active_connections.forEach((e) => {
-			if (e.id === peer_id_add) {
-				exists = true;
+		for (let x = 0; x < active_connections.length; x++) {
+			if (active_connections[x].id === peer_id_add) {
+				return;
 			}
-		});
-		if (exists) return;
+		}
 
 		const conn = client.connect(peer_id_add as string);
 		conn.on('open', function () {
-			conn.on('data', receive_message);
 			active_connections.push({
 				id: peer_id_add as string,
 				conn: conn
@@ -100,6 +96,7 @@
 				if (e.id !== conn.peer) send_message(`oid:${e.id}`);
 			});
 		});
+		conn.on('data', receive_message);
 	}
 
 	function send_message(msg?: null | string) {
@@ -205,7 +202,7 @@
 	</div>
 	<span class="flex flex-row gap-2">
 		<input bind:value={peer_id_add} class="input" type="text" placeholder="Peer ID" />
-		<button onclick={open_connection} class={`btn ${client ? 'btn-primary' : 'btn-disabled'}`}
+		<button onclick={open_connection} class={`btn ${client?.id ? 'btn-primary' : 'btn-disabled'}`}
 			>Open Connection</button
 		>
 	</span>
@@ -214,7 +211,7 @@
 		<div class="divider"></div>
 	</div>
 	<h2 class=" text-lg font-bold">Messenger</h2>
-	<div class="max-h-40 min-h-40 overflow-scroll rounded bg-black">
+	<div bind:this={message_box} class="max-h-40 min-h-40 overflow-scroll rounded bg-black">
 		{#each messages as value}
 			<div class="chat-bubble my-1">{value}</div>
 		{/each}
@@ -231,8 +228,8 @@
 			class="input w-full"
 		/>
 		<button
-			onclick={send_message}
-			class={`btn ${client ? 'btn-primary' : 'btn-disabled'} text-nowrap`}
+			onclick={() => send_message()}
+			class={`btn ${client?.id ? 'btn-primary' : 'btn-disabled'} text-nowrap`}
 			>Send Message
 		</button>
 	</div>
