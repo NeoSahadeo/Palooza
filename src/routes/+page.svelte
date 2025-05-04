@@ -78,6 +78,15 @@
 		if (!client || client!.id === peer_id_add) {
 			return;
 		}
+
+		let exists = false;
+		active_connections.forEach((e) => {
+			if (e.id === peer_id_add) {
+				exists = true;
+			}
+		});
+		if (exists) return;
+
 		const conn = client.connect(peer_id_add as string);
 		conn.on('open', function () {
 			conn.on('data', receive_message);
@@ -110,6 +119,7 @@
 	function close_connection() {
 		active_connections = active_connections.filter((e, index) => {
 			if (e.id === this.value) {
+				send_message(`cid:${client!.id}`);
 				e.conn.close();
 				return false;
 			}
