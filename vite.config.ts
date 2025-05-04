@@ -4,6 +4,10 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	// https://github.com/peers/peerjs/issues/661#issuecomment-1961800407
+	server: {
+		host: '127.0.0.1'
+	},
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
 		workspace: [
