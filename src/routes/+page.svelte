@@ -214,7 +214,7 @@
 			<tbody>
 				{#each active_connections as value, index}
 					<tr>
-						<td>{index}</td>
+						<td>{index + 1}</td>
 						<td>{value.id}</td>
 						<td
 							><button
@@ -242,7 +242,7 @@
 	<div bind:this={message_box} class="max-h-40 min-h-40 overflow-scroll rounded bg-black">
 		{#each messages as value}
 			{#if value.includes('self: ')}
-				<div class="chat-bubble chat-bubble-neutral">
+				<div class="chat-bubble chat-bubble-neutral my-1">
 					{value.slice(6)}
 				</div>
 			{:else}
