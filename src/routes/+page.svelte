@@ -118,12 +118,12 @@
 				conn: conn
 			});
 			peer_id_add = '';
+			conn.on('data', receive_message);
 
 			active_connections.forEach((e) => {
 				if (e.id !== conn.peer) send_message(`oid:${e.id}`);
 			});
 		});
-		conn.on('data', receive_message);
 	}
 
 	function send_message(msg?: null | string) {
@@ -135,7 +135,11 @@
 		}
 		messages.push(`self: ${output}`);
 		active_connections.forEach((e) => {
-			e.conn.send(output);
+			try {
+				e.conn.send(output);
+			} catch (e) {
+				console.log(e);
+			}
 		});
 		message_content = '';
 	}
