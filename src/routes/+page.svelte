@@ -1,6 +1,7 @@
 <script lang="ts">
 	// palooza
 	import Peer, { type DataConnection } from 'peerjs';
+	import palooaza from '../lib/assets/paloozaLogo.png';
 
 	let client = $state<Peer>();
 	let client_state = $state<Boolean>(false);
@@ -27,10 +28,10 @@
 	function create_client() {
 		client_state = true;
 		// https://gist.github.com/sagivo/3a4b2f2c7ac6e1b5267c2f1f59ac6c6b?permalink_comment_id=4727522#gistcomment-4727522
-		client = new Peer({
+		client = new Peer('cc87141b-b140-418f-9c45-4e8c7a700b2e', {
 			config: {
 				iceServers: [
-					{ url: 'stun:stun.l.google.com:19302' },
+					{ url: 'STUN:freestun.net:3478' },
 					{
 						url: 'TURN:freestun.net:3478',
 						username: 'free',
@@ -101,7 +102,7 @@
 	}
 
 	function open_connection() {
-		if (!client || client!.id === peer_id_add) {
+		if (!client || client!.id === peer_id_add || !peer_id_add) {
 			return;
 		}
 
@@ -159,6 +160,7 @@
 <div class="hero bg-base-200 mt-10">
 	<div class="hero-content text-center">
 		<div class="max-w-md">
+			<img src={palooaza} alt="Palooza" />
 			<h1 class="text-5xl font-bold">Palooza Tester</h1>
 			<p class="py-6">
 				A site to troubleshoot and provide basic tooling for the <a
