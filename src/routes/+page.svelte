@@ -28,7 +28,7 @@
 	function create_client() {
 		client_state = true;
 		// https://gist.github.com/sagivo/3a4b2f2c7ac6e1b5267c2f1f59ac6c6b?permalink_comment_id=4727522#gistcomment-4727522
-		client = new Peer('cc87141b-b140-418f-9c45-4e8c7a700b2e', {
+		client = new Peer({
 			config: {
 				iceServers: [
 					{ url: 'STUN:freestun.net:3478' },
