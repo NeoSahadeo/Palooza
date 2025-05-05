@@ -91,12 +91,19 @@
 			}
 		} else if ((data as string).includes('cid:')) {
 			const id = data.slice(4);
-			active_connections = active_connections.filter((e, index) => {
-				if (e.id === id) {
-					return false;
-				}
-				return true;
-			});
+			if (id === client!.id) {
+				active_connections.forEach((e) => {
+					e.conn.close();
+				});
+				active_connections = [];
+			} else {
+				active_connections = active_connections.filter((e, index) => {
+					if (e.id === id) {
+						return false;
+					}
+					return true;
+				});
+			}
 		}
 		messages.push(data);
 	}
@@ -148,7 +155,7 @@
 	function close_connection() {
 		active_connections = active_connections.filter((e, index) => {
 			if (e.id === this.value) {
-				send_message(`cid:${client!.id}`);
+				send_message(`cid:${e.id}`);
 				e.conn.close();
 				return false;
 			}
