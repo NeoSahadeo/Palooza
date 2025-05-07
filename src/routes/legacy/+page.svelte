@@ -1,5 +1,6 @@
 <script lang="ts">
 	// palooza
+	import './app.css';
 	import Peer, { type DataConnection } from 'peerjs';
 	import palooaza from '$lib/assets/paloozaLogo.png';
 
@@ -168,7 +169,7 @@
 	<div class="hero-content text-center">
 		<div class="max-w-md">
 			<img src={palooaza} alt="Palooza" />
-			<h1 class="text-5xl font-bold">Palooza Tester</h1>
+			<h1 class="text-5xl font-bold">Palooza Tester Legacy (PeerJS)</h1>
 			<p class="py-6">
 				A site to troubleshoot and provide basic tooling for the <a
 					class="link link-primary"
@@ -315,12 +316,6 @@
 		</div>
 	</nav>
 	<aside>
-		<p>
-			Themed by <a
-				class="link link-accent"
-				href="https://www.linkedin.com/in/uveer-madho-824ba21a2/">Uveer Madho</a
-			>
-		</p>
 		<p>Palooza © {new Date().getFullYear()} - All right reserved by Neo Sahadeo</p>
 	</aside>
 </footer>

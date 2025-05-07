@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './app.css';
 	import palooaza from '$lib/assets/paloozaLogo.png';
 </script>
 

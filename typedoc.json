@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["src/lib/palooza.ts"],
+  "out": "typedoc",
+	"jsDocCompatibility": {
+			"exampleTag": true,
+			"defaultTag": true,
+			"inheritDocTag": true,
+			"ignoreUnescapedBraces": true
+	}
+}
