@@ -3,6 +3,8 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
+	   "module": "preserve",
+	   "moduleDetection": "force",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,

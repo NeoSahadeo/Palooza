@@ -1,6 +1,5 @@
 <script lang="ts">
 	// palooza
-	import './app.css';
 	import Peer, { type DataConnection } from 'peerjs';
 	import palooaza from '$lib/assets/paloozaLogo.png';
 
