@@ -59,10 +59,10 @@ class SignalService extends EventListener {
 	 * @param [ip='0.0.0.0']
 	 * @param [port='25565']
 	 */
-	constructor(ip = '0.0.0.0', port = '25565', debug = 0) {
+	constructor(ip = 'neosahadeo.ddns.net', port = '25565', debug = 0) {
 		super();
 		this.debug = debug;
-		this.base = `ws://${ip}:${port}/`;
+		this.base = `wss://${ip}:${port}/`;
 	}
 
 	message_handler(e: MessageEvent) {
